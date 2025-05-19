@@ -5,7 +5,7 @@ const app = express();
 app.use(express.json());
 
 app.post('/validate-token', async (req, res) => {
-    const { token } = req.body;
+    const token = req.headers.authorization?.split(' ')[1];
 
     try {
         const response = await axios.get('https://graph.microsoft.com/v1.0/me', {
@@ -14,7 +14,7 @@ app.post('/validate-token', async (req, res) => {
 
         res.json({ valid: true, user: response.data });
     } catch (error) {
-        res.status(401).json({ valid: false, error: error.response.data });
+        res.status(401).json({ valid: false, error: error.response?.data || 'Invalid token' });
     }
 });
 
